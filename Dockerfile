@@ -5,24 +5,27 @@ COPY pyproject.toml uv.lock ./
 # Export the locked, hashed set: the image installs exactly what uv.lock pins.
 RUN uv export --frozen --no-dev --no-emit-project -o requirements.txt
 
+# Update base image
+FROM python:3.13-slim as base-image
+
+RUN apt-get update && apt-get install -y --no-install-recommends libexpat1 curl && apt-get install -y --only-upgrade --no-install-recommends zlib1g && rm -rf /var/lib/apt/lists/*
+
+
 # Stage 2: Build
-FROM python:3.13-slim AS builder
+FROM base-image AS builder
 WORKDIR /swi
 # Install system dependencies
-RUN apt-get update && apt-get install -y libexpat1 && rm -rf /var/lib/apt/lists/*
 COPY --from=uv /swi/requirements.txt .
 RUN pip install --no-cache-dir --require-hashes -r requirements.txt
 
 # Stage 3: Runtime
-FROM python:3.13-slim
+FROM base-image
 # The project reserves uids above 9000. Every SWI image that shares a volume with this one
 # (the cron job that writes the forecast data) uses the same uid and gid, so the files this
 # service reads and the user it runs as always match.
 ARG APP_UID=9001
 ARG APP_GID=9001
 WORKDIR /swi
-# Install system dependencies (curl is needed for the HEALTHCHECK below)
-RUN apt-get update && apt-get install -y --no-install-recommends libexpat1 curl && rm -rf /var/lib/apt/lists/*
 # Copy only necessary files from the builder stage
 COPY --from=builder /usr/local/lib/python3.13/site-packages /usr/local/lib/python3.13/site-packages
 COPY --from=builder /usr/local/bin /usr/local/bin
