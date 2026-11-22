@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/svalbard-watch/swi-titiller/compare/0.1.0...0.1.1) (2026-11-22)
+
+
+### Bug Fixes
+
+* update python image ([3fd6604](https://github.com/svalbard-watch/swi-titiller/commit/3fd6604c1637eabcc734e6e46f56485c450cd012))
+
 ## [0.1.0](https://github.com/UNIS-Svalbard-Weather-Information/swi-titiller/compare/0.0.4...0.1.0) (2026-10-12)
 
 
