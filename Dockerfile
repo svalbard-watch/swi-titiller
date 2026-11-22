@@ -6,7 +6,7 @@ COPY pyproject.toml uv.lock ./
 RUN uv export --frozen --no-dev --no-emit-project -o requirements.txt
 
 # Update base image
-FROM python:3.13-slim as base-image
+FROM python:3.15-slim as base-image
 
 RUN apt-get update && apt-get install -y --no-install-recommends libexpat1 curl && apt-get install -y --only-upgrade --no-install-recommends zlib1g && rm -rf /var/lib/apt/lists/*
 
